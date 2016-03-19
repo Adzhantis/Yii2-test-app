@@ -36,18 +36,14 @@ class FakeController extends Controller
             $author->last_name = $faker->word;
             $author->save(false);
 
-            echo 'Author - '.$i;
-
             for ($j = 0; $j < 5; $j++) {
                 $books = new Books();
                 $books->name = $faker->word;
-                $books->date_create = date('U');
-                $books->date_update = date('U');
-                $books->preview = $faker->image('img');
-                $books->date = date('U');
+                $books->date_create = strtotime($i + $j .' May');
+                $books->date_update = strtotime($i + $j .' May');
+                $books->preview = $faker->image('web\img');
+                $books->date = strtotime($i + $j .' May');
                 $books->save(false);
-
-                echo  '<br> Book - ' .$j. '<br>';
             }
         }
         echo 'Authors and Books - done!';
