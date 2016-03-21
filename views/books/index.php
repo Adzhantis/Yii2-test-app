@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\bootstrap\Modal;
 
 ?>
 <div class="books-index">
@@ -12,33 +13,13 @@ use yii\grid\GridView;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+        'columns' => \app\models\Books::getGridColumns()
+    ]);
 
-            'id',
-            'name',
-            [
-                'attribute' => 'preview',
-                'format'    => 'raw',
-                'value'     => function ($model) {
-                    return "<a href='$model->preview' rel='lightbox'>
-                                <img width='20' height='20' src='$model->preview'>
-                            </a>";
-                },
-            ],
-            [
-                'attribute' => 'date_create',
-                'format'    => 'date',
-            ],
-            [
-                'attribute' => 'date_update',
-                'format'    => 'date',
-            ],
-            // 'date',
-            // 'author_id',
+    Modal::begin(['id' => 'view-book']);
+    Modal::end();
 
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+
+?>
 
 </div>

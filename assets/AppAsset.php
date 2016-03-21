@@ -22,7 +22,8 @@ class AppAsset extends AssetBundle
         'css/lightbox.min.css',
     ];
     public $js = [
-        'js/lightbox.min.js'
+        'js/lightbox.min.js',
+        'js/books.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',

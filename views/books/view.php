@@ -30,10 +30,15 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'name',
-            'preview',
-            'date_create',
-            'date_update',
-            'date',
+            [
+                'attribute'=>'preview',
+                'value'=> $model->getPreviewUrl(),
+                'format' => ['image',['width'=>'100','height'=>'100']],
+            ],
+            'date_create:datetime',
+
+            'date_update:datetime',
+            'date:datetime',
             'author_id',
         ],
     ]) ?>
