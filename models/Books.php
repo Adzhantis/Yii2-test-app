@@ -20,6 +20,8 @@ use yii\behaviors\TimestampBehavior;
  */
 class Books extends \yii\db\ActiveRecord
 {
+
+    public $image;
     /**
      * @inheritdoc
      */
@@ -34,9 +36,10 @@ class Books extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['date_create'], 'required'],
-            [['date_create', 'date_update', 'date', 'author_id'], 'integer'],
-            [['name', 'preview'], 'string', 'max' => 60]
+            [['date_create', 'name'], 'required'],
+            [['date_create', 'date_update',  'author_id'], 'integer'],
+            [['name', 'date', 'preview'], 'string', 'max' => 60],
+            [['image'], 'image', 'skipOnEmpty' => false, 'extensions' => 'png, jpg'],
         ];
     }
 
@@ -49,6 +52,7 @@ class Books extends \yii\db\ActiveRecord
             'id' => 'ID',
             'name' => 'Name',
             'preview' => 'Preview',
+            'image' => 'Image',
             'date_create' => 'Date Create',
             'date_update' => 'Date Update',
             'date' => 'Date',
@@ -79,6 +83,27 @@ class Books extends \yii\db\ActiveRecord
     {
         return Yii::getAlias('@img') . '/' . $this->preview;
     }
+
+    public function getLightBox()
+    {
+        return "<a href='" . $this->getPreviewUrl() . "' rel='lightbox'>
+                                <img width='40' height='40' src='" . $this->getPreviewUrl() . "'>
+               </a>";
+    }
+
+    public function upload()
+    {
+        if ($this->validate()) {
+
+            $this->preview = $this->image->baseName    . '.' . $this->image->extension;
+            $this->image->saveAs($this->getPreviewUrl());
+            $this->image = '';
+
+            return true;
+        } else {
+            return false;
+        }
+    }
     
     public static function getGridColumns()
     {
@@ -91,9 +116,7 @@ class Books extends \yii\db\ActiveRecord
                 'attribute' => 'preview',
                 'format'    => 'raw',
                 'value'     => function ($model) {
-                    return "<a href='" . $model->getPreviewUrl() . "' rel='lightbox'>
-                                <img width='20' height='20' src='" . $model->getPreviewUrl() . "'>
-                            </a>";
+                    return $model->getLightBox();
                 },
             ],
             [
@@ -111,7 +134,7 @@ class Books extends \yii\db\ActiveRecord
                 'attribute' => 'author_id',
                 'format'    => 'raw',
                 'value'     => function ($model) {
-                    return $model->author->first_name . ' ' . $model->author->last_name;
+                    return $model->author->getName();
                 },
             ],
 

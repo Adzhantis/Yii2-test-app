@@ -31,15 +31,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'name',
             [
-                'attribute'=>'preview',
-                'value'=> $model->getPreviewUrl(),
-                'format' => ['image',['width'=>'100','height'=>'100']],
+                'attribute' => 'preview',
+                'value' => $model->getLightBox(),
+                'format' => ['raw'],
             ],
             'date_create:datetime',
 
             'date_update:datetime',
             'date:datetime',
-            'author_id',
+            [
+                'attribute' => 'author_id',
+                'value'=> $model->author->getName(),
+                'format' => ['raw'],
+            ],
         ],
     ]) ?>
 

@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "authors".
@@ -48,12 +49,24 @@ class Authors extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return string
      */
-    
+    public function getName()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
     
     public function getBooks()
     {
         return $this->hasMany(Books::className(), ['author_id' => 'id']);
+    }
+    
+    public static function getAuthors(){
+
+        $models = self::find()->all();
+
+        return ArrayHelper::map($models, 'id',  function(Authors $model) {
+            return $model->first_name . ' ' . $model->last_name;
+        });
     }
 }

@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Authors;
 use Yii;
 use app\models\Books;
 use yii\data\ActiveDataProvider;
@@ -9,6 +10,7 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * BooksController implements the CRUD actions for Books model.
@@ -52,6 +54,7 @@ class BooksController extends Controller
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'authors' => Authors::getAuthors(),
         ]);
     }
 
@@ -68,40 +71,30 @@ class BooksController extends Controller
     }
 
     /**
-     * Creates a new Books model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
      */
-    public function actionCreate()
-    {
-        $model = new Books();
+    public function actionUpdate()
+    {   
+        
+        $model = Yii::$app->request->get('id') > 0 ?
+            $this->findModel(Yii::$app->request->get('id')) :
+            new Books();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+
+        if ($model->load(Yii::$app->request->post())) {
+
+            $model->image = UploadedFile::getInstance($model, 'image');
+
+            if ($model->upload() && $model->save())
+                return $this->redirect(['index']);
+
         }
-    }
 
-    /**
-     * Updates an existing Books model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
+        return $this->render('update', [
+            'model' => $model,
+            'authors' => Authors::getAuthors(),
+        ]);
     }
 
     /**
@@ -112,8 +105,10 @@ class BooksController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
+        $model = $this->findModel($id);
+        unlink($model->getPreviewUrl());
+        $model->delete();
+        
         return $this->redirect(['index']);
     }
 

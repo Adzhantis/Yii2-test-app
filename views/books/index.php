@@ -8,7 +8,7 @@ use yii\bootstrap\Modal;
 <div class="books-index">
 
     <p>
-        <?= Html::a('Create Books', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Create Books', ['update'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
