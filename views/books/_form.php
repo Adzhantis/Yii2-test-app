@@ -15,12 +15,19 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'image')->fileInput(); ?>
+    <? if($model->image): ?>
+    <?= $model->getLightBox(); ?>
+    <? endif ?>
 
-   
+    <br>
+    <label class="control-label" for="books-date">
+        <?= $model->getAttributeLabel('date') ?>
+    </label>
+
     <?= \kartik\date\DatePicker::widget([
-    'name' => 'check_issue_date',
-    'value' => date("Y-m-d H:i:s", $model->date),
-    'options' => ['placeholder' => 'Select issue date ...'],
+    'name' => 'Books[date]',
+    'value' => date("d-M-Y", $model->date),
+    'options' => ['placeholder' => 'Выберите дату выхода книги'],
     'pluginOptions' => [
     'format' => 'dd-M-yyyy',
     'todayHighlight' => true

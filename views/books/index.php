@@ -7,13 +7,16 @@ use yii\bootstrap\Modal;
 ?>
 <div class="books-index">
 
-    <p>
-        <?= Html::a('Create Books', ['update'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <?php echo $this->render('_search', [
+        'model' => $searchModel,
+        'authors' => $authors
+    ]); ?>
+
+<!--    <p>--><?//= Html::a('Create Books', ['update'], ['class' => 'btn btn-success']) ?><!--</p>-->
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'columns' => \app\models\Books::getGridColumns()
+        'columns' => \app\models\Books::getGridColumns(),
     ]);
 
     Modal::begin(['id' => 'view-book']);

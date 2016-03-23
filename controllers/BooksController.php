@@ -3,10 +3,13 @@
 namespace app\controllers;
 
 use app\models\Authors;
+use app\models\BookSearch;
 use Yii;
 use app\models\Books;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -48,12 +51,14 @@ class BooksController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Books::find(),
-        ]);
+
+        Url::remember();
+        $searchModel = new BookSearch();
+        $searchModel->load(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $searchModel->search(Yii::$app->request->queryParams),
+            'searchModel' => $searchModel,
             'authors' => Authors::getAuthors(),
         ]);
     }
@@ -76,21 +81,17 @@ class BooksController extends Controller
      */
     public function actionUpdate()
     {   
-        
+
         $model = Yii::$app->request->get('id') > 0 ?
             $this->findModel(Yii::$app->request->get('id')) :
             new Books();
 
-
         if ($model->load(Yii::$app->request->post())) {
-
-            $model->image = UploadedFile::getInstance($model, 'image');
-
-            if ($model->upload() && $model->save())
-                return $this->redirect(['index']);
-
+            $model->upload();
+            if ($model->save())
+                return $this->redirect(Url::previous());
         }
-
+        
         return $this->render('update', [
             'model' => $model,
             'authors' => Authors::getAuthors(),
